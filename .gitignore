@@ -1,0 +1,6 @@
+_*
+*.swp
+node_modules
+env/
+manage.py
+db.sqlite3
