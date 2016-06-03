@@ -33,7 +33,7 @@ var App = React.createClass({displayName: "App",
             var items = this.state.items.map(function(item){
                 //console.log(this.state.items)
                 console.log(item)
-                return React.createElement("li", null, " ", item.description, " ")
+                return React.createElement("li", null, " ", item.description, " | ", item.date, " |  ", item.tags, " ")
             })
             console.log(items)
         }

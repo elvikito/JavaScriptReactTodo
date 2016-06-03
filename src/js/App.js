@@ -33,7 +33,7 @@ var App = React.createClass({
             var items = this.state.items.map(function(item){
                 //console.log(this.state.items)
                 console.log(item)
-                return <li> {item.description} </li>
+                return <li> {item.description} | {item.date} |  {item.tags} </li>
             })
             console.log(items)
         }
