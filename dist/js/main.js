@@ -19669,27 +19669,193 @@ module.exports = require('./lib/React');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var HelloMessage = React.createClass({displayName: "HelloMessage",
-    proTypes:{
-        title:React.PropTypes.string.isRequired
-    },
-    getDefaultProps: function(){
-        return {
-            title: "ToDoList",
-            text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
-        }
-    },
-    render: function() {
+var Banner = React.createClass({displayName: "Banner",
+    render: function(){
         return (
-            React.createElement("div", {className: "jumbotron"}, 
-            React.createElement("h2", null, this.props.title), 
-            React.createElement("p", null, this.props.text), 
-                React.createElement("p", null, React.createElement("a", {className: "btn btn-primary btn-lg", href: "#", role: "button"}, "Learn more"))
+            React.createElement("div", {className: "page-header"}, 
+                React.createElement("h3", null, "Todo-Lits")
             )
-        );  // Display a property.
+        );
     }
 });
-ReactDOM.render(React.createElement(HelloMessage, {title: "ToDoList"}),
+
+
+module.exports = Banner;
+
+},{"react":167,"react-dom":2}],169:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+
+var Form = React.createClass({displayName: "Form",
+
+    render: function(){
+        return (
+            React.createElement("form", {onSubmit: this.onSubmit}, 
+                React.createElement("div", {className: "form-group"}, 
+                    React.createElement("input", {className: "form-control", type: "text", ref: "text", onChange: this.onChange})
+                )
+            )
+        );
+    },
+    onChange: function(){
+        console.log("task")
+    },
+    onSubmit: function(e){
+        console.log("text send");
+        e.preventDefault();
+        var text = this.refs.text.value.trim();
+        if(!text){
+            alert("please text");
+            return;
+        }
+        this.props.onFormSubmit(text);
+        this.refs.text.value = "";
+
+    }
+
+});
+
+module.exports = Form;
+
+},{"react":167,"react-dom":2}],170:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+
+var ListItem = React.createClass({displayName: "ListItem",
+    render: function(){
+        return ( 
+            React.createElement("li", {className: "list-group-item"}, this.props.children)
+        );
+    }
+});
+
+
+module.exports = ListItem;
+
+},{"react":167,"react-dom":2}],171:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var ListItem = require('./item.js');
+
+var List = React.createClass({displayName: "List",
+    render: function(){
+        var self = this;
+        var createItem = function(itemText){
+            return (
+                React.createElement(ListItem, {key: itemText.key}, itemText, React.createElement("a", {onClick: self.onDelete.bind(self, itemText), href: "#"}, React.createElement("span", {className: "glyphicon glyphicon-remove"})))
+            );
+        }
+        return React.createElement("ul", {className: "list-group"}, this.props.items.map(createItem));
+    },
+    onDelete: function(item){
+        this.props.deleteItem(item);
+    }
+})
+
+module.exports = List;
+
+},{"./item.js":170,"react":167,"react-dom":2}],172:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var List = require('./list.js');
+var Form = require('./form.js');
+var Banner = require('./banner.js');
+
+//hello world
+//
+/*var HelloMessage = React.createClass({*/
+    //proTypes:{
+        //title:React.PropTypes.string.isRequired
+    //},
+    //getDefaultProps: function(){
+        //return {
+            //title: "ToDoList",
+            //text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
+        //}
+    //},
+    //render: function() {
+        //return (
+            //<div className="jumbotron">
+                //<h2>{this.props.title}</h2>
+                //<p>{this.props.text}</p>
+                //<p><a onClick={this.onClick.bind(this, "HI")} className="btn btn-primary btn-lg" href="#" role="button"> Alert</a></p>
+                //<Componentetwo text={this.props.text}/>
+            //</div>
+        //);  // Display a property.
+    //},
+    //onClick: function(e){
+        //alert(e)
+    //}
+//});
+
+//var Componentetwo = React.createClass({
+    //render: function(){
+        //return(
+            //<div>{this.props.text}</div>        
+        //);
+    //}
+/*});*/
+
+var App = React.createClass({displayName: "App",
+    getInitialState: function() {
+        return {
+            text: '',
+            items:[
+                {
+                    id: 1, 
+                    text: 'run task'
+                },
+                {
+                    id: 2,
+                    text: 'debug task'
+                },
+                {
+                    id: 3,
+                    text: 'console task'
+                }
+            
+            ]
+        };
+    },
+    updateItems: function(text){ 
+        var newItem = {
+            id : this.state.items.length +1,
+            text: text
+        }
+        this.setState({items: this.state.items.concat(newItem)}); 
+    },
+    render: function() {
+        if (this.state.items) {
+            var items = this.state.items.map(function(item){
+                return  React.createElement("span", {key: item.id}, item.text) 
+            })
+        }
+        return (
+            React.createElement("div", null, 
+                React.createElement(Banner, null), 
+                React.createElement(Form, {onFormSubmit: this.updateItems}), 
+                React.createElement(List, {items: items, deleteItem: this.ItemsDelete})
+            )
+        )
+    },
+    ItemsDelete: function(item){
+        var items = this.state.items;
+        console.log(items);
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == item.key){
+                console.log(item.key);
+                items.splice(i, 1);
+            }
+        }
+        this.setState({items : items});
+    }
+});
+    
+ReactDOM.render(React.createElement(App, {title: "ToDoList"}),
   document.getElementById('main'));
 
-},{"react":167,"react-dom":2}]},{},[168]);
+},{"./banner.js":168,"./form.js":169,"./list.js":171,"react":167,"react-dom":2}]},{},[172]);
