@@ -5,16 +5,18 @@ var ReactDOM = require('react-dom');
 var Form = React.createClass({
 
     render: function(){
+        var self = this;
+        console.log(self.props.text);
         return (
             <form onSubmit={this.onSubmit}>
                 <div className="form-group">
-                    <input className="form-control" type='text' ref='text' onChange={this.onChange}/>
+                    <input className="form-control" type='text' ref='text' value={this.props.text} onChange={this.onChange}/>
                 </div>
             </form>
         );
     },
-    onChange: function(){
-        console.log("task")
+    onChange: function(e){
+        console.log("data");
     },
     onSubmit: function(e){
         console.log("text send");

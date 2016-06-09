@@ -19690,16 +19690,18 @@ var ReactDOM = require('react-dom');
 var Form = React.createClass({displayName: "Form",
 
     render: function(){
+        var self = this;
+        console.log(self.props.text);
         return (
             React.createElement("form", {onSubmit: this.onSubmit}, 
                 React.createElement("div", {className: "form-group"}, 
-                    React.createElement("input", {className: "form-control", type: "text", ref: "text", onChange: this.onChange})
+                    React.createElement("input", {className: "form-control", type: "text", ref: "text", value: this.props.text, onChange: this.onChange})
                 )
             )
         );
     },
-    onChange: function(){
-        console.log("task")
+    onChange: function(e){
+        console.log("data");
     },
     onSubmit: function(e){
         console.log("text send");
@@ -19737,6 +19739,7 @@ module.exports = ListItem;
 },{"react":167,"react-dom":2}],171:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
+//(React as any).__spread = Object.assign;
 
 var ListItem = require('./item.js');
 
@@ -19745,13 +19748,19 @@ var List = React.createClass({displayName: "List",
         var self = this;
         var createItem = function(itemText){
             return (
-                React.createElement(ListItem, {key: itemText.key}, itemText, React.createElement("a", {onClick: self.onDelete.bind(self, itemText), href: "#"}, React.createElement("span", {className: "glyphicon glyphicon-remove"})))
+                React.createElement(ListItem, {key: itemText.key}, 
+                    React.createElement("span", {onClick: self.onEdit.bind(self, itemText)}, itemText), 
+                    React.createElement("a", {href: "#", onClick: self.onDelete.bind(self, itemText), className: "glyphicon glyphicon-remove"})
+                )
             );
         }
         return React.createElement("ul", {className: "list-group"}, this.props.items.map(createItem));
     },
     onDelete: function(item){
         this.props.deleteItem(item);
+    },
+    onEdit: function(item){
+        this.props.editItem(item);
     }
 })
 
@@ -19804,6 +19813,7 @@ var App = React.createClass({displayName: "App",
     getInitialState: function() {
         return {
             text: '',
+            isEdit: 0,
             items:[
                 {
                     id: 1, 
@@ -19822,6 +19832,7 @@ var App = React.createClass({displayName: "App",
         };
     },
     updateItems: function(text){ 
+        console.log("onFormSubmit")
         var newItem = {
             id : this.state.items.length +1,
             text: text
@@ -19837,10 +19848,20 @@ var App = React.createClass({displayName: "App",
         return (
             React.createElement("div", null, 
                 React.createElement(Banner, null), 
-                React.createElement(Form, {onFormSubmit: this.updateItems}), 
-                React.createElement(List, {items: items, deleteItem: this.ItemsDelete})
+                React.createElement(Form, {
+                    text: this.state.text, 
+                    onFormSubmit: this.updateItems}
+                ), 
+                React.createElement(List, {
+                    items: items, 
+                    editItem: this.ItemsEdit, 
+                    deleteItem: this.ItemsDelete}
+                )
             )
         )
+    },
+    ItemsEdit: function(event){
+        this.setState({text: event.props.children, isEdit: event.key});
     },
     ItemsDelete: function(item){
         var items = this.state.items;

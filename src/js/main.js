@@ -44,6 +44,7 @@ var App = React.createClass({
     getInitialState: function() {
         return {
             text: '',
+            isEdit: 0,
             items:[
                 {
                     id: 1, 
@@ -62,6 +63,7 @@ var App = React.createClass({
         };
     },
     updateItems: function(text){ 
+        console.log("onFormSubmit")
         var newItem = {
             id : this.state.items.length +1,
             text: text
@@ -77,10 +79,20 @@ var App = React.createClass({
         return (
             <div>
                 <Banner />
-                <Form onFormSubmit={this.updateItems}/>
-                <List items={items} deleteItem={this.ItemsDelete}/> 
+                <Form 
+                    text={this.state.text} 
+                    onFormSubmit={this.updateItems}
+                />
+                <List
+                    items={items}
+                    editItem={this.ItemsEdit}
+                    deleteItem={this.ItemsDelete}
+                /> 
             </div>
         )
+    },
+    ItemsEdit: function(event){
+        this.setState({text: event.props.children, isEdit: event.key});
     },
     ItemsDelete: function(item){
         var items = this.state.items;
