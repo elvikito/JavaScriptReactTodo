@@ -48,15 +48,18 @@ var App = React.createClass({
             items:[
                 {
                     id: 1, 
-                    text: 'run task'
+                    text: 'run task',
+                    complete: false 
                 },
                 {
                     id: 2,
-                    text: 'debug task'
+                    text: 'debug task',
+                    complete: true
                 },
                 {
                     id: 3,
-                    text: 'console task'
+                    text: 'console task',
+                    complete: true
                 }
             
             ]
@@ -73,30 +76,58 @@ var App = React.createClass({
     render: function() {
         if (this.state.items) {
             var items = this.state.items.map(function(item){
-                return  <span key={item.id}>{item.text}</span> 
+                return  <span key={item.id} complete={item.complete}>{item.text}</span> 
             })
         }
         return (
             <div>
                 <Banner />
                 <Form 
+                    changeText={this.handleTextChange}
                     text={this.state.text} 
+                    isEdit={this.state.isEdit}
+                    onUpdateItem={this.handleUpdate}
                     onFormSubmit={this.updateItems}
                 />
                 <List
                     items={items}
                     editItem={this.ItemsEdit}
                     deleteItem={this.ItemsDelete}
+                    checkItem={this.ItemCheck}
                 /> 
             </div>
         )
     },
+    handleTextChange: function(text){
+        this.setState({text: text});
+    
+    },
     ItemsEdit: function(event){
         this.setState({text: event.props.children, isEdit: event.key});
     },
+    ItemCheck:function(item){
+        console.log(item);
+        var items = this.state.items;
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == item.key){
+                console.log(items);
+                //items.splice(i, 1);
+            }
+        }
+        this.setState({items : items});
+    },
+    handleUpdate: function(item){
+        var items = this.state.items;
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == item.id){
+                items.splice(i, 1);
+            }
+        }
+        items.push(item);
+        this.setState({items : items});
+    },
     ItemsDelete: function(item){
         var items = this.state.items;
-        console.log(items);
         for(var i = 0; i < items.length; i++){
             if(items[i].id == item.key){
                 console.log(item.key);

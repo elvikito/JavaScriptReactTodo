@@ -19691,7 +19691,6 @@ var Form = React.createClass({displayName: "Form",
 
     render: function(){
         var self = this;
-        console.log(self.props.text);
         return (
             React.createElement("form", {onSubmit: this.onSubmit}, 
                 React.createElement("div", {className: "form-group"}, 
@@ -19701,7 +19700,7 @@ var Form = React.createClass({displayName: "Form",
         );
     },
     onChange: function(e){
-        console.log("data");
+        this.props.changeText(e.target.value);
     },
     onSubmit: function(e){
         console.log("text send");
@@ -19711,7 +19710,18 @@ var Form = React.createClass({displayName: "Form",
             alert("please text");
             return;
         }
-        this.props.onFormSubmit(text);
+        console.log(this.props.isEdit);
+        if(this.props.isEdit){
+            var updateitem={
+                id:this.props.isEdit,
+                text:text
+            }
+            this.props.onUpdateItem(updateitem);
+            console.log("is update");
+        }else{
+            console.log("is not edit");
+            this.props.onFormSubmit(text);
+        }
         this.refs.text.value = "";
 
     }
@@ -19727,8 +19737,11 @@ var ReactDOM = require('react-dom');
 
 var ListItem = React.createClass({displayName: "ListItem",
     render: function(){
+        var divStyle = {
+            background: "#f2f2f2",
+        };
         return ( 
-            React.createElement("li", {className: "list-group-item"}, this.props.children)
+            React.createElement("li", {className: "list-group-item", style: divStyle}, this.props.children)
         );
     }
 });
@@ -19749,8 +19762,16 @@ var List = React.createClass({displayName: "List",
         var createItem = function(itemText){
             return (
                 React.createElement(ListItem, {key: itemText.key}, 
-                    React.createElement("span", {onClick: self.onEdit.bind(self, itemText)}, itemText), 
-                    React.createElement("a", {href: "#", onClick: self.onDelete.bind(self, itemText), className: "glyphicon glyphicon-remove"})
+                    React.createElement("form", null, 
+                     React.createElement("div", {className: "checkbox"}, 
+                        React.createElement("label", null, 
+                            React.createElement("input", {type: "checkbox", checked: itemText.props.complete, 
+                                onChange: self.handleChangeChk.bind(self, itemText)}), 
+                                React.createElement("span", {onClick: self.onEdit.bind(self, itemText)}, itemText), 
+                                React.createElement("a", {href: "#", onClick: self.onDelete.bind(self, itemText), className: "glyphicon glyphicon-remove"})
+                        )
+                     )
+                    )
                 )
             );
         }
@@ -19761,6 +19782,9 @@ var List = React.createClass({displayName: "List",
     },
     onEdit: function(item){
         this.props.editItem(item);
+    },
+    handleChangeChk: function(item){
+        this.props.checkItem(item);
     }
 })
 
@@ -19817,15 +19841,18 @@ var App = React.createClass({displayName: "App",
             items:[
                 {
                     id: 1, 
-                    text: 'run task'
+                    text: 'run task',
+                    complete: false 
                 },
                 {
                     id: 2,
-                    text: 'debug task'
+                    text: 'debug task',
+                    complete: true
                 },
                 {
                     id: 3,
-                    text: 'console task'
+                    text: 'console task',
+                    complete: true
                 }
             
             ]
@@ -19842,30 +19869,58 @@ var App = React.createClass({displayName: "App",
     render: function() {
         if (this.state.items) {
             var items = this.state.items.map(function(item){
-                return  React.createElement("span", {key: item.id}, item.text) 
+                return  React.createElement("span", {key: item.id, complete: item.complete}, item.text) 
             })
         }
         return (
             React.createElement("div", null, 
                 React.createElement(Banner, null), 
                 React.createElement(Form, {
+                    changeText: this.handleTextChange, 
                     text: this.state.text, 
+                    isEdit: this.state.isEdit, 
+                    onUpdateItem: this.handleUpdate, 
                     onFormSubmit: this.updateItems}
                 ), 
                 React.createElement(List, {
                     items: items, 
                     editItem: this.ItemsEdit, 
-                    deleteItem: this.ItemsDelete}
+                    deleteItem: this.ItemsDelete, 
+                    checkItem: this.ItemCheck}
                 )
             )
         )
     },
+    handleTextChange: function(text){
+        this.setState({text: text});
+    
+    },
     ItemsEdit: function(event){
         this.setState({text: event.props.children, isEdit: event.key});
     },
+    ItemCheck:function(item){
+        console.log(item);
+        var items = this.state.items;
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == item.key){
+                console.log(items);
+                //items.splice(i, 1);
+            }
+        }
+        this.setState({items : items});
+    },
+    handleUpdate: function(item){
+        var items = this.state.items;
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == item.id){
+                items.splice(i, 1);
+            }
+        }
+        items.push(item);
+        this.setState({items : items});
+    },
     ItemsDelete: function(item){
         var items = this.state.items;
-        console.log(items);
         for(var i = 0; i < items.length; i++){
             if(items[i].id == item.key){
                 console.log(item.key);

@@ -10,8 +10,16 @@ var List = React.createClass({
         var createItem = function(itemText){
             return (
                 <ListItem key={itemText.key}>
-                    <span onClick={self.onEdit.bind(self, itemText)}>{itemText}</span>
-                    <a href="#" onClick={self.onDelete.bind(self, itemText)} className="glyphicon glyphicon-remove"></a>
+                    <form>
+                     <div className="checkbox">
+                        <label>
+                            <input type="checkbox" checked={itemText.props.complete}
+                                onChange={self.handleChangeChk.bind(self, itemText)}/>
+                                <span onClick={self.onEdit.bind(self, itemText)}>{itemText}</span>
+                                <a href="#" onClick={self.onDelete.bind(self, itemText)} className="glyphicon glyphicon-remove"></a>
+                        </label>
+                     </div>
+                    </form>
                 </ListItem>
             );
         }
@@ -22,6 +30,9 @@ var List = React.createClass({
     },
     onEdit: function(item){
         this.props.editItem(item);
+    },
+    handleChangeChk: function(item){
+        this.props.checkItem(item);
     }
 })
 

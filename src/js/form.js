@@ -6,7 +6,6 @@ var Form = React.createClass({
 
     render: function(){
         var self = this;
-        console.log(self.props.text);
         return (
             <form onSubmit={this.onSubmit}>
                 <div className="form-group">
@@ -16,7 +15,7 @@ var Form = React.createClass({
         );
     },
     onChange: function(e){
-        console.log("data");
+        this.props.changeText(e.target.value);
     },
     onSubmit: function(e){
         console.log("text send");
@@ -26,7 +25,18 @@ var Form = React.createClass({
             alert("please text");
             return;
         }
-        this.props.onFormSubmit(text);
+        console.log(this.props.isEdit);
+        if(this.props.isEdit){
+            var updateitem={
+                id:this.props.isEdit,
+                text:text
+            }
+            this.props.onUpdateItem(updateitem);
+            console.log("is update");
+        }else{
+            console.log("is not edit");
+            this.props.onFormSubmit(text);
+        }
         this.refs.text.value = "";
 
     }
