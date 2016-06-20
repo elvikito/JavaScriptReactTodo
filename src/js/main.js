@@ -1,7 +1,10 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var ToggleDisplay = require('react-toggle-display');
 
-var List = require('./list.js');
+
+var ListInit = require('./list_init.js');
+var ListFinish = require('./list_finish.js');
 var Form = require('./form.js');
 var Banner = require('./banner.js');
 
@@ -76,7 +79,16 @@ var App = React.createClass({
     render: function() {
         if (this.state.items) {
             var items = this.state.items.map(function(item){
-                return  <span key={item.id} complete={item.complete}>{item.text}</span> 
+                if(item.complete==="true"){
+                    return(<span key={item.id} complete={item.complete} value={item.text} id={item.id}>
+                        {item.text}
+                       </span>)
+                }
+                else{
+                    return(<span key={item.id} complete={item.complete} value={item.text} id={item.id}>
+                        {item.text}
+                    </span>)
+                }
             })
         }
         return (
@@ -89,12 +101,21 @@ var App = React.createClass({
                     onUpdateItem={this.handleUpdate}
                     onFormSubmit={this.updateItems}
                 />
-                <List
-                    items={items}
-                    editItem={this.ItemsEdit}
-                    deleteItem={this.ItemsDelete}
-                    checkItem={this.ItemCheck}
-                /> 
+                <div>New
+                    <ListInit
+                        items={items}
+                        editItem={this.ItemsEdit}
+                        deleteItem={this.ItemsDelete}
+                        checkItem={this.linkCheckbox}
+                    />
+                </div>
+                <div>finished
+                    <ListFinish
+                        items={items}
+                        checkItem={this.linkCheckbox}
+                    />
+                </div>
+
             </div>
         )
     },
@@ -105,17 +126,6 @@ var App = React.createClass({
     ItemsEdit: function(event){
         this.setState({text: event.props.children, isEdit: event.key});
     },
-    ItemCheck:function(item){
-        console.log(item);
-        var items = this.state.items;
-        for(var i = 0; i < items.length; i++){
-            if(items[i].id == item.key){
-                console.log(items);
-                //items.splice(i, 1);
-            }
-        }
-        this.setState({items : items});
-    },
     handleUpdate: function(item){
         var items = this.state.items;
         for(var i = 0; i < items.length; i++){
@@ -124,6 +134,7 @@ var App = React.createClass({
             }
         }
         items.push(item);
+        console.log("Update")
         this.setState({items : items});
     },
     ItemsDelete: function(item){
@@ -135,6 +146,20 @@ var App = React.createClass({
             }
         }
         this.setState({items : items});
+    },
+    changeCheckForId: function(d,id) {
+        var items = this.state.items;
+        for(var i = 0; i < items.length; i++){
+            if(items[i].id == id){
+                items.splice(i, 1);
+            }
+        }
+        var newData = {id: d.props.id, text: d.props.children, complete: !d.props.complete}
+        items.push(newData);
+        this.setState({items : items});
+    },
+    linkCheckbox: function(d){
+        this.changeCheckForId(d,d.props.id);
     }
 });
     
