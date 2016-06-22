@@ -1,6 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ToggleDisplay = require('react-toggle-display');
+var firebase = require("firebase/app");
+  require("firebase/auth");
+  require("firebase/database");
 
 
 var ListInit = require('./list_init.js');
@@ -8,6 +11,13 @@ var ListFinish = require('./list_finish.js');
 var Form = require('./form.js');
 var Banner = require('./banner.js');
 
+var config = {
+        apiKey: "AIzaSyBFbmt7YgRDsGhqCdFtUqDm65SXJNx6ZW8",
+        authDomain: "under-db337.firebaseapp.com",
+        databaseURL: "https://under-db337.firebaseio.com",
+        storageBucket: "under-db337.appspot.com",
+};
+firebase.initializeApp(config);
 //hello world
 //
 /*var HelloMessage = React.createClass({*/
@@ -48,33 +58,36 @@ var App = React.createClass({
         return {
             text: '',
             isEdit: 0,
-            items:[
-                {
-                    id: 1, 
-                    text: 'run task',
-                    complete: false 
-                },
-                {
-                    id: 2,
-                    text: 'debug task',
-                    complete: true
-                },
-                {
-                    id: 3,
-                    text: 'console task',
-                    complete: true
-                }
-            
-            ]
+            items:[]
         };
     },
+    componentWillMount: function(){
+          this.firebaseRef = firebase.database().ref('items');
+          this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+          var items = [];
+          dataSnapshot.forEach(function(childSnapshot) {
+            var item = childSnapshot.val();
+            item['key'] = childSnapshot.key;
+            items.push(item);
+          }.bind(this));
+
+          this.setState({
+            items: items
+          });
+        }.bind(this));
+    },
+    componentWillUnmount: function() {
+        this.firebaseRef.off();
+    },
     updateItems: function(text){ 
-        console.log("onFormSubmit")
         var newItem = {
             id : this.state.items.length +1,
-            text: text
+            text: text,
+            complete: false
         }
+        this.firebaseRef.push(newItem);
         this.setState({items: this.state.items.concat(newItem)}); 
+        this.setState({text: ''});
     },
     render: function() {
         if (this.state.items) {
@@ -121,27 +134,27 @@ var App = React.createClass({
     },
     handleTextChange: function(text){
         this.setState({text: text});
-    
     },
-    ItemsEdit: function(event){
-        this.setState({text: event.props.children, isEdit: event.key});
+    ItemsEdit: function(item){
+        this.setState({text: item.props.children, isEdit: item.key});
     },
     handleUpdate: function(item){
         var items = this.state.items;
         for(var i = 0; i < items.length; i++){
             if(items[i].id == item.id){
+                this.firebaseRef.child(items[i].key).update({text: item.text, id: item.id, complete: item.complete});
                 items.splice(i, 1);
             }
         }
         items.push(item);
-        console.log("Update")
         this.setState({items : items});
     },
     ItemsDelete: function(item){
+        var key = item.props.id;
         var items = this.state.items;
         for(var i = 0; i < items.length; i++){
             if(items[i].id == item.key){
-                console.log(item.key);
+                this.firebaseRef.child(items[i].key).remove();
                 items.splice(i, 1);
             }
         }
@@ -149,12 +162,13 @@ var App = React.createClass({
     },
     changeCheckForId: function(d,id) {
         var items = this.state.items;
+        var newData = {id: d.props.id, text: d.props.children, complete: !d.props.complete}
         for(var i = 0; i < items.length; i++){
             if(items[i].id == id){
+                this.firebaseRef.child(items[i].key).update(newData);
                 items.splice(i, 1);
             }
         }
-        var newData = {id: d.props.id, text: d.props.children, complete: !d.props.complete}
         items.push(newData);
         this.setState({items : items});
     },

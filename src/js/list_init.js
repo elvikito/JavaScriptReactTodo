@@ -7,10 +7,10 @@ var ListItem = require('./item.js');
 var ListInit = React.createClass({
     render: function(){
         var self = this;
-        var createItem = function(itemText){
+        var createItem = function(itemText, index){
             if(!itemText.props.complete){
                 return (
-                    <ListItem key={itemText.key}>
+                    <ListItem key={index}>
                         <form>
                          <div className="checkbox">
                             <label>
