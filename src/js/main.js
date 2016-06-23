@@ -20,38 +20,38 @@ var config = {
 firebase.initializeApp(config);
 //hello world
 //
-/*var HelloMessage = React.createClass({*/
-    //proTypes:{
-        //title:React.PropTypes.string.isRequired
-    //},
-    //getDefaultProps: function(){
-        //return {
-            //title: "ToDoList",
-            //text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
-        //}
-    //},
-    //render: function() {
-        //return (
-            //<div className="jumbotron">
-                //<h2>{this.props.title}</h2>
-                //<p>{this.props.text}</p>
-                //<p><a onClick={this.onClick.bind(this, "HI")} className="btn btn-primary btn-lg" href="#" role="button"> Alert</a></p>
-                //<Componentetwo text={this.props.text}/>
-            //</div>
-        //);  // Display a property.
-    //},
-    //onClick: function(e){
-        //alert(e)
-    //}
-//});
+var HelloMessage = React.createClass({
+    proTypes:{
+        title:React.PropTypes.string.isRequired
+    },
+    getDefaultProps: function(){
+        return {
+            title: "ToDoList",
+            text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
+        }
+    },
+    render: function() {
+        return (
+            <div className="jumbotron">
+                <h2>{this.props.title}</h2>
+                <p>{this.props.text}</p>
+                <p><a onClick={this.onClick.bind(this, "HI")} className="btn btn-primary btn-lg" href="#" role="button"> Alert</a></p>
+                <Componentetwo text={this.props.text}/>
+            </div>
+        );  // Display a property.
+    },
+    onClick: function(e){
+        alert(e)
+    }
+});
 
-//var Componentetwo = React.createClass({
-    //render: function(){
-        //return(
-            //<div>{this.props.text}</div>        
-        //);
-    //}
-/*});*/
+var Componentetwo = React.createClass({
+    render: function(){
+        return(
+            <div>{this.props.text}</div>        
+        );
+    }
+});
 
 var App = React.createClass({
     getInitialState: function() {
@@ -179,3 +179,5 @@ var App = React.createClass({
     
 ReactDOM.render(<App title="ToDoList" />,
   document.getElementById('main'));
+
+//ReactDOM.render(<HelloMessage />, document.getElementById('main'));

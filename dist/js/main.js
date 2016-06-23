@@ -20436,38 +20436,38 @@ var config = {
 firebase.initializeApp(config);
 //hello world
 //
-/*var HelloMessage = React.createClass({*/
-    //proTypes:{
-        //title:React.PropTypes.string.isRequired
-    //},
-    //getDefaultProps: function(){
-        //return {
-            //title: "ToDoList",
-            //text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
-        //}
-    //},
-    //render: function() {
-        //return (
-            //<div className="jumbotron">
-                //<h2>{this.props.title}</h2>
-                //<p>{this.props.text}</p>
-                //<p><a onClick={this.onClick.bind(this, "HI")} className="btn btn-primary btn-lg" href="#" role="button"> Alert</a></p>
-                //<Componentetwo text={this.props.text}/>
-            //</div>
-        //);  // Display a property.
-    //},
-    //onClick: function(e){
-        //alert(e)
-    //}
-//});
+var HelloMessage = React.createClass({displayName: "HelloMessage",
+    proTypes:{
+        title:React.PropTypes.string.isRequired
+    },
+    getDefaultProps: function(){
+        return {
+            title: "ToDoList",
+            text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
+        }
+    },
+    render: function() {
+        return (
+            React.createElement("div", {className: "jumbotron"}, 
+                React.createElement("h2", null, this.props.title), 
+                React.createElement("p", null, this.props.text), 
+                React.createElement("p", null, React.createElement("a", {onClick: this.onClick.bind(this, "HI"), className: "btn btn-primary btn-lg", href: "#", role: "button"}, " Alert")), 
+                React.createElement(Componentetwo, {text: this.props.text})
+            )
+        );  // Display a property.
+    },
+    onClick: function(e){
+        alert(e)
+    }
+});
 
-//var Componentetwo = React.createClass({
-    //render: function(){
-        //return(
-            //<div>{this.props.text}</div>        
-        //);
-    //}
-/*});*/
+var Componentetwo = React.createClass({displayName: "Componentetwo",
+    render: function(){
+        return(
+            React.createElement("div", null, this.props.text)        
+        );
+    }
+});
 
 var App = React.createClass({displayName: "App",
     getInitialState: function() {
@@ -20595,5 +20595,7 @@ var App = React.createClass({displayName: "App",
     
 ReactDOM.render(React.createElement(App, {title: "ToDoList"}),
   document.getElementById('main'));
+
+//ReactDOM.render(<HelloMessage />, document.getElementById('main'));
 
 },{"./banner.js":175,"./form.js":176,"./list_finish.js":178,"./list_init.js":179,"firebase/app":2,"firebase/auth":3,"firebase/database":4,"react":174,"react-dom":8,"react-toggle-display":9}]},{},[180]);
