@@ -5,6 +5,14 @@ var ListItem = require('./item.js');
 
 var ListFinish = React.createClass({
     render: function(){
+        var divStyle = {
+            paddingTop: 4,
+        };
+        var textDecoration={
+            textDecorationLine: 'line-through',
+            textDecorationColor: '#71bc74',
+            color: "#71bc74",
+        };
         var self = this;
         var ite = function(itemText){
             if(itemText.props.complete){   
@@ -12,11 +20,11 @@ var ListFinish = React.createClass({
                         <ListItem key={itemText.key}>
                             <form>
                              <div className="checkbox">
-                                <label>
+                                <label style={divStyle}>
                                     <input type="checkbox" checked={itemText.props.complete}
                                         onChange={self.handleChangeChk.bind(self, itemText)} value={itemText.props.value} />
                                 </label>
-                                        <span>{itemText}</span>
+                                        <span style={textDecoration}>{itemText}</span>
                              </div>
                             </form>
                         </ListItem>

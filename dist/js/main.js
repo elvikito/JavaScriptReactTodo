@@ -20257,12 +20257,18 @@ module.exports = require('./lib/React');
 },{"./lib/React":35}],175:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-
+       
 var Banner = React.createClass({displayName: "Banner",
+ 
     render: function(){
+        var divStyle = {
+          color: "#f2f2f2",
+          marginTop: 6,
+          marginLeft: 18,
+        };
         return (
             React.createElement("div", {className: "page-header"}, 
-                React.createElement("h3", null, "Todo-Lits")
+                React.createElement("h3", {style: divStyle}, "Under-Lits")
             )
         );
     }
@@ -20279,9 +20285,14 @@ var ReactDOM = require('react-dom');
 var Form = React.createClass({displayName: "Form",
 
     render: function(){
+        var divStyle = {
+          marginTop: 6,
+          marginLeft: 17,
+          marginRight: 16,
+        };
         var self = this;
         return (
-            React.createElement("form", {onSubmit: this.onSubmit}, 
+            React.createElement("form", {onSubmit: this.onSubmit, style: divStyle}, 
                 React.createElement("div", {className: "form-group"}, 
                     React.createElement("input", {className: "form-control", type: "text", ref: "text", value: this.props.text, onChange: this.onChange})
                 )
@@ -20325,6 +20336,9 @@ var ListItem = React.createClass({displayName: "ListItem",
     render: function(){
         var divStyle = {
             background: "#f2f2f2",
+            marginTop: 6,
+            paddingBottom: 0,
+            paddingTop: 0,
         };
         return ( 
             React.createElement("li", {className: "list-group-item", style: divStyle}, this.props.children)
@@ -20343,6 +20357,14 @@ var ListItem = require('./item.js');
 
 var ListFinish = React.createClass({displayName: "ListFinish",
     render: function(){
+        var divStyle = {
+            paddingTop: 4,
+        };
+        var textDecoration={
+            textDecorationLine: 'line-through',
+            textDecorationColor: '#71bc74',
+            color: "#71bc74",
+        };
         var self = this;
         var ite = function(itemText){
             if(itemText.props.complete){   
@@ -20350,11 +20372,11 @@ var ListFinish = React.createClass({displayName: "ListFinish",
                         React.createElement(ListItem, {key: itemText.key}, 
                             React.createElement("form", null, 
                              React.createElement("div", {className: "checkbox"}, 
-                                React.createElement("label", null, 
+                                React.createElement("label", {style: divStyle}, 
                                     React.createElement("input", {type: "checkbox", checked: itemText.props.complete, 
                                         onChange: self.handleChangeChk.bind(self, itemText), value: itemText.props.value})
                                 ), 
-                                        React.createElement("span", null, itemText)
+                                        React.createElement("span", {style: textDecoration}, itemText)
                              )
                             )
                         )
@@ -20379,6 +20401,9 @@ var ListItem = require('./item.js');
 
 var ListInit = React.createClass({displayName: "ListInit",
     render: function(){
+        var divStyle = {
+            paddingTop: 4,
+        };
         var self = this;
         var createItem = function(itemText, index){
             if(!itemText.props.complete){
@@ -20386,12 +20411,12 @@ var ListInit = React.createClass({displayName: "ListInit",
                     React.createElement(ListItem, {key: index}, 
                         React.createElement("form", null, 
                          React.createElement("div", {className: "checkbox"}, 
-                            React.createElement("label", null, 
+                            React.createElement("label", {style: divStyle}, 
                                 React.createElement("input", {type: "checkbox", checked: itemText.props.complete, 
                                     onChange: self.handleChangeChk.bind(self, itemText), value: itemText.props.value})
                             ), 
                                     React.createElement("span", {onClick: self.onEdit.bind(self, itemText)}, itemText), 
-                                    React.createElement("a", {href: "#", onClick: self.onDelete.bind(self, itemText), className: "glyphicon glyphicon-remove"})
+                                    React.createElement("a", {href: "#", onClick: self.onDelete.bind(self, itemText), className: "glyphicon glyphicon-remove pull-right"})
                          )
                         )
                     )
@@ -20435,36 +20460,45 @@ var config = {
 };
 firebase.initializeApp(config);
 //hello world
-//
 var HelloMessage = React.createClass({displayName: "HelloMessage",
     proTypes:{
         title:React.PropTypes.string.isRequired
     },
     getDefaultProps: function(){
         return {
-            title: "ToDoList",
-            text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
+            title: "Title",
+            text : "Example Component thwo."
+        }
+    },
+    getInitialState: function(){
+        return {
+            nombre: "elvis",
+            apellido: "ramirez",
+            edad: 25
         }
     },
     render: function() {
         return (
             React.createElement("div", {className: "jumbotron"}, 
-                React.createElement("h2", null, this.props.title), 
-                React.createElement("p", null, this.props.text), 
+                React.createElement("h5", null, "Nombre: ", this.state.nombre), 
+                React.createElement("h5", null, "Apellido: ", this.state.apellido), 
+                React.createElement("h5", null, "Edad: ", this.state.edad), 
                 React.createElement("p", null, React.createElement("a", {onClick: this.onClick.bind(this, "HI"), className: "btn btn-primary btn-lg", href: "#", role: "button"}, " Alert")), 
-                React.createElement(Componentetwo, {text: this.props.text})
+                React.createElement(Componentetwo, {newT: this.props.text})
             )
-        );  // Display a property.
+        )
     },
     onClick: function(e){
-        alert(e)
+        this.setState({
+            nombre : "elvikito"
+        });
     }
 });
 
 var Componentetwo = React.createClass({displayName: "Componentetwo",
     render: function(){
         return(
-            React.createElement("div", null, this.props.text)        
+            React.createElement("div", null, this.props.newT)        
         );
     }
 });
@@ -20480,17 +20514,17 @@ var App = React.createClass({displayName: "App",
     componentWillMount: function(){
           this.firebaseRef = firebase.database().ref('items');
           this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-          var items = [];
-          dataSnapshot.forEach(function(childSnapshot) {
-            var item = childSnapshot.val();
-            item['key'] = childSnapshot.key;
-            items.push(item);
-          }.bind(this));
+            var items = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var item = childSnapshot.val();
+                item['key'] = childSnapshot.key;
+                items.push(item);
+            }.bind(this));
 
-          this.setState({
-            items: items
-          });
-        }.bind(this));
+            this.setState({
+                items: items
+            });
+            }.bind(this));
     },
     componentWillUnmount: function() {
         this.firebaseRef.off();
@@ -20521,7 +20555,7 @@ var App = React.createClass({displayName: "App",
             })
         }
         return (
-            React.createElement("div", null, 
+            React.createElement("div", {className: "row"}, 
                 React.createElement(Banner, null), 
                 React.createElement(Form, {
                     changeText: this.handleTextChange, 
@@ -20530,7 +20564,7 @@ var App = React.createClass({displayName: "App",
                     onUpdateItem: this.handleUpdate, 
                     onFormSubmit: this.updateItems}
                 ), 
-                React.createElement("div", null, "New", 
+                React.createElement("div", {className: "col-md-12"}, 
                     React.createElement(ListInit, {
                         items: items, 
                         editItem: this.ItemsEdit, 
@@ -20538,7 +20572,7 @@ var App = React.createClass({displayName: "App",
                         checkItem: this.linkCheckbox}
                     )
                 ), 
-                React.createElement("div", null, "finished", 
+                React.createElement("div", {className: "col-md-12"}, "TAREAS COMPLETADAS", 
                     React.createElement(ListFinish, {
                         items: items, 
                         checkItem: this.linkCheckbox}
@@ -20593,8 +20627,7 @@ var App = React.createClass({displayName: "App",
     }
 });
     
-ReactDOM.render(React.createElement(App, {title: "ToDoList"}),
-  document.getElementById('main'));
+ReactDOM.render(React.createElement(App, {title: "ToDoList"}), document.getElementById('main'));
 
 //ReactDOM.render(<HelloMessage />, document.getElementById('main'));
 

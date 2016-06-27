@@ -19,36 +19,45 @@ var config = {
 };
 firebase.initializeApp(config);
 //hello world
-//
 var HelloMessage = React.createClass({
     proTypes:{
         title:React.PropTypes.string.isRequired
     },
     getDefaultProps: function(){
         return {
-            title: "ToDoList",
-            text : "The Example To Do is enough for some people. Others prefer to use programs. websites (thin app)"
+            title: "Title",
+            text : "Example Component thwo."
+        }
+    },
+    getInitialState: function(){
+        return {
+            nombre: "elvis",
+            apellido: "ramirez",
+            edad: 25
         }
     },
     render: function() {
         return (
             <div className="jumbotron">
-                <h2>{this.props.title}</h2>
-                <p>{this.props.text}</p>
+                <h5>Nombre: {this.state.nombre}</h5>
+                <h5>Apellido: {this.state.apellido}</h5>
+                <h5>Edad: {this.state.edad}</h5>
                 <p><a onClick={this.onClick.bind(this, "HI")} className="btn btn-primary btn-lg" href="#" role="button"> Alert</a></p>
-                <Componentetwo text={this.props.text}/>
+                <Componentetwo newT={this.props.text}/>
             </div>
-        );  // Display a property.
+        )
     },
     onClick: function(e){
-        alert(e)
+        this.setState({
+            nombre : "elvikito"
+        });
     }
 });
 
 var Componentetwo = React.createClass({
     render: function(){
         return(
-            <div>{this.props.text}</div>        
+            <div>{this.props.newT}</div>        
         );
     }
 });
@@ -64,17 +73,17 @@ var App = React.createClass({
     componentWillMount: function(){
           this.firebaseRef = firebase.database().ref('items');
           this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-          var items = [];
-          dataSnapshot.forEach(function(childSnapshot) {
-            var item = childSnapshot.val();
-            item['key'] = childSnapshot.key;
-            items.push(item);
-          }.bind(this));
+            var items = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var item = childSnapshot.val();
+                item['key'] = childSnapshot.key;
+                items.push(item);
+            }.bind(this));
 
-          this.setState({
-            items: items
-          });
-        }.bind(this));
+            this.setState({
+                items: items
+            });
+            }.bind(this));
     },
     componentWillUnmount: function() {
         this.firebaseRef.off();
@@ -105,7 +114,7 @@ var App = React.createClass({
             })
         }
         return (
-            <div>
+            <div className="row">
                 <Banner />
                 <Form 
                     changeText={this.handleTextChange}
@@ -114,7 +123,7 @@ var App = React.createClass({
                     onUpdateItem={this.handleUpdate}
                     onFormSubmit={this.updateItems}
                 />
-                <div>New
+                <div className="col-md-12">
                     <ListInit
                         items={items}
                         editItem={this.ItemsEdit}
@@ -122,7 +131,7 @@ var App = React.createClass({
                         checkItem={this.linkCheckbox}
                     />
                 </div>
-                <div>finished
+                <div className="col-md-12">TAREAS COMPLETADAS
                     <ListFinish
                         items={items}
                         checkItem={this.linkCheckbox}
@@ -177,7 +186,6 @@ var App = React.createClass({
     }
 });
     
-ReactDOM.render(<App title="ToDoList" />,
-  document.getElementById('main'));
+ReactDOM.render(<App title="ToDoList" />, document.getElementById('main'));
 
 //ReactDOM.render(<HelloMessage />, document.getElementById('main'));

@@ -6,6 +6,9 @@ var ListItem = require('./item.js');
 
 var ListInit = React.createClass({
     render: function(){
+        var divStyle = {
+            paddingTop: 4,
+        };
         var self = this;
         var createItem = function(itemText, index){
             if(!itemText.props.complete){
@@ -13,12 +16,12 @@ var ListInit = React.createClass({
                     <ListItem key={index}>
                         <form>
                          <div className="checkbox">
-                            <label>
+                            <label style={divStyle}>
                                 <input type="checkbox" checked={itemText.props.complete}
                                     onChange={self.handleChangeChk.bind(self, itemText)} value={itemText.props.value} />
                             </label>
                                     <span onClick={self.onEdit.bind(self, itemText)}>{itemText}</span>
-                                    <a href="#" onClick={self.onDelete.bind(self, itemText)} className="glyphicon glyphicon-remove"></a>
+                                    <a href="#" onClick={self.onDelete.bind(self, itemText)} className="glyphicon glyphicon-remove pull-right"></a>
                          </div>
                         </form>
                     </ListItem>
