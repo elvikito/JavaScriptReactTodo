@@ -1,38 +1,43 @@
 var React = require('react');
 var AppActions = require('../actions/AppActions');
 var AppStore = require('../stores/AppStore');
+var MainSection = require('./MainSection.react');
+var Footer = require('./Footer.react');
 
-function getAppState(){
-    return {
-    
-    }
+function getState() {
+  return {
+    all: AppStore.getAll()
+  };
 }
 
 var App = React.createClass({
-    getInitialState: function(){
-        return getAppState();
+    getInitialState: function() {
+        return getState();
     },
 
-    componentDidMount: function(){
-        AppStore.addChangeListener(this._onChange);
+    handleClick: function(){
+        AppActions.addItem("example add item");
     },
 
-    componentUnmount: function(){
-        AppStore.removeChangeListener(this._onChange);
+    componentDidMount: function() {
+      AppStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function() {
+      AppStore.removeChangeListener(this._onChange);
     },
 
     render: function(){
         return(
-           <div>
-                Default Component         
-           </div>
+            <div>
+                <MainSection />
+            </div>
+            //<div onClick={this.handleClick}>D{this.state.all}</div>
         )
     },
-
-    _onChange: function(){
-        this.setState(getAppState());
+    _onChange: function() {
+        this.setState(getState());
     }
-
 });
 
 module.exports = App;

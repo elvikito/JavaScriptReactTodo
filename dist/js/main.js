@@ -21878,59 +21878,120 @@ var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 var AppConstants = require('../constants/AppConstants.js');
 
 var AppActions = {
+    addItem: function(item){
+        AppDispatcher.handleViewAction({
+                actionType:AppConstants.ADD_ITEM,
+                item: item
+        })
+    }
  
 };
 
 module.exports = AppActions;
 
-},{"../constants/AppConstants.js":177,"../dispatcher/AppDispatcher.js":178}],176:[function(require,module,exports){
+},{"../constants/AppConstants.js":179,"../dispatcher/AppDispatcher.js":180}],176:[function(require,module,exports){
 var React = require('react');
 var AppActions = require('../actions/AppActions');
 var AppStore = require('../stores/AppStore');
+var MainSection = require('./MainSection.react');
+var Footer = require('./Footer.react');
 
-function getAppState(){
-    return {
-    
-    }
+function getState() {
+  return {
+    all: AppStore.getAll()
+  };
 }
 
 var App = React.createClass({displayName: "App",
-    getInitialState: function(){
-        return getAppState();
+    getInitialState: function() {
+        return getState();
     },
 
-    componentDidMount: function(){
-        AppStore.addChangeListener(this._onChange);
+    handleClick: function(){
+        AppActions.addItem("example add item");
     },
 
-    componentUnmount: function(){
-        AppStore.removeChangeListener(this._onChange);
+    componentDidMount: function() {
+      AppStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function() {
+      AppStore.removeChangeListener(this._onChange);
     },
 
     render: function(){
         return(
-           React.createElement("div", null, 
-                "Default Component"         
-           )
+            React.createElement("div", null, 
+                React.createElement(MainSection, null)
+            )
+            //<div onClick={this.handleClick}>D{this.state.all}</div>
         )
     },
-
-    _onChange: function(){
-        this.setState(getAppState());
+    _onChange: function() {
+        this.setState(getState());
     }
-
 });
 
 module.exports = App;
 
-},{"../actions/AppActions":175,"../stores/AppStore":180,"react":173}],177:[function(require,module,exports){
+},{"../actions/AppActions":175,"../stores/AppStore":182,"./Footer.react":177,"./MainSection.react":178,"react":173}],177:[function(require,module,exports){
+var React = require('react');
+var AppActions = require('../actions/AppActions');
+var AppStore = require('../stores/AppStore');
+
+var Footer = React.createClass({displayName: "Footer",
+
+    render: function(){
+        return(
+            React.createElement("div", {className: "row"}, 
+              React.createElement("div", {className: "col-xs-12 col-md-10 box-a"}, 
+              React.createElement("p", null, "Mi nombre es elvis ramirez, soy un desarrollador web de Cochabamba, Bolivia."), 
+              React.createElement("p", null, "Mi trabajo es mi pasión más grande. Me encanta desarrollar sitios web, cada día trato de descubrir nuevas formas de desarrollo y nuevas formas de mejorar mis habilidades: la codificación es mi vida!"
+              )
+              )
+            )
+        )
+    },
+});
+
+module.exports = Footer;
+
+},{"../actions/AppActions":175,"../stores/AppStore":182,"react":173}],178:[function(require,module,exports){
+var React = require('react');
+var AppActions = require('../actions/AppActions');
+var AppStore = require('../stores/AppStore');
+
+var MainSection = React.createClass({displayName: "MainSection",
+
+    render: function(){
+        return(
+            React.createElement("div", {className: "row"}, 
+              React.createElement("div", {className: "col-xs-6 col-md-4 contr-r"}, 
+                React.createElement("div", {className: "mtop"}, "HOME"), 
+                React.createElement("div", null, "ABOUT"), 
+                React.createElement("div", null, "CONTACT"), 
+                React.createElement("div", {className: "ctop"}, "twitter"), 
+                React.createElement("div", null, "facebook"), 
+                React.createElement("div", {className: "mycontent-right"})
+              ), 
+              React.createElement("div", {className: "col-xs-6 col-md-8 contr-c"}, 
+                React.createElement("div", null, "Elvis Ramirez Iriarte")
+              )
+            )
+        )
+    },
+});
+
+module.exports = MainSection;
+
+},{"../actions/AppActions":175,"../stores/AppStore":182,"react":173}],179:[function(require,module,exports){
 var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
-  ADD_FORM: 'ADD_FORM',
+  ADD_ITEM: 'ADD_ITEM',
 });
 
-},{"keymirror":6}],178:[function(require,module,exports){
+},{"keymirror":6}],180:[function(require,module,exports){
 //requiere flux
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
@@ -21950,16 +22011,15 @@ var AppDispatcher = assign(new Dispatcher(), {
 
 module.exports = AppDispatcher;
 
-},{"flux":3,"object-assign":7}],179:[function(require,module,exports){
+},{"flux":3,"object-assign":7}],181:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-//var AppAPI = require('./utils/AppAPI')
 var App = require('./components/App.react');
 
 
 ReactDOM.render(React.createElement(App, null), document.getElementById('main'));
 
-},{"./components/App.react":176,"react":173,"react-dom":8}],180:[function(require,module,exports){
+},{"./components/App.react":176,"react":173,"react-dom":8}],182:[function(require,module,exports){
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var AppConstants = require('../constants/AppConstants');
 var EventEmitter = require('events').EventEmitter;
@@ -21972,6 +22032,15 @@ var CHANGE_EVENT = 'change';
 
 _items = [];
 
+function create(text) {
+  var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+  _items[id] = {
+    id: id,
+    complete: false,
+    text: text
+  };
+}
+
 var AppStore = assign({}, EventEmitter.prototype, {
     emitChange: function(){
         this.emit(CHANGE_EVENT);
@@ -21981,18 +22050,30 @@ var AppStore = assign({}, EventEmitter.prototype, {
     },
     removeChangeListener: function(callback){
         this.removeListener('change', callback);
+    },
+    getAll: function() {
+        return _items;
     }
 });
 AppDispatcher.register(function(payload){
     var action = payload.action;
+    console.log(payload);
 
     switch(action.actionType){
+        case AppConstants.ADD_ITEM:
+            console.log("data");
+            text = action.item.trim();
+            if (text !== '') {
+                create(text);
+                AppStore.emitChange();
+            }
+        break;
         
     }
     return true;
 });
 module.exports = AppStore;
 
-},{"../constants/AppConstants":177,"../dispatcher/AppDispatcher":178,"../utils/AppApi":181,"events":1,"object-assign":7,"underscore":174}],181:[function(require,module,exports){
+},{"../constants/AppConstants":179,"../dispatcher/AppDispatcher":180,"../utils/AppApi":183,"events":1,"object-assign":7,"underscore":174}],183:[function(require,module,exports){
 
-},{}]},{},[179]);
+},{}]},{},[181]);

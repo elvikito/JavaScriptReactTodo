@@ -1,7 +1,8 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
 var reactify = require('reactify');
-var source = require('vinyl-source-stream')
+var source = require('vinyl-source-stream');
+var sass = require('gulp-sass');
 
 var babelify = require("babelify");
 
@@ -20,6 +21,12 @@ gulp.task('copy', function(){
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['browserify', 'copy'], function(){
-    return gulp.watch('src/**/*.*', ['browserify', 'copy'])
+gulp.task('sass', function () {
+  return gulp.src('./src/styles/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('dist/css'));
+});
+
+gulp.task('default', ['browserify', 'copy', 'sass'], function(){
+    return gulp.watch('src/**/*.*', ['browserify', 'copy', 'sass'])
 });
