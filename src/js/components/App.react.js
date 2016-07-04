@@ -31,6 +31,7 @@ var App = React.createClass({
         return(
             <div>
                 <MainSection />
+                <Footer />
             </div>
             //<div onClick={this.handleClick}>D{this.state.all}</div>
         )

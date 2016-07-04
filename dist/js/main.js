@@ -21922,7 +21922,8 @@ var App = React.createClass({displayName: "App",
     render: function(){
         return(
             React.createElement("div", null, 
-                React.createElement(MainSection, null)
+                React.createElement(MainSection, null), 
+                React.createElement(Footer, null)
             )
             //<div onClick={this.handleClick}>D{this.state.all}</div>
         )
